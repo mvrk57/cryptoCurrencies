@@ -6,6 +6,7 @@ import time
 from subprocess import check_output
 from tinydb import TinyDB, Query
 import sys
+import re
 
 #feed_name = 'TRIBUNE'
 #url = 'http://chicagotribune.feedsportal.com/c/34253/f/622872/index.rss'
@@ -60,9 +61,22 @@ f = open(feed_db, 'a')
 
 for post in feed.entries:
 
-    if not post_is_in_db(post.title):
-        f.write(post.content + "|" + str(current_timestamp) + "\n")
+	if not post_is_in_db(post.title):
 
+		#remove everythin in <...>	
+		temp = post.summary
+
+		#delete html tags
+		temp = re.sub("<[^>]*>", "", temp)
+
+		#delete space 
+		temp = re.sub("(\s\s\s*)/", "", temp)
+
+		#delete tabulator
+		temp = re.sub("(\t)", "", temp)
+
+		#f.write(temp + "|" + str(current_timestamp) + "\n")
+		f.write(temp)
 f.close
 
 
